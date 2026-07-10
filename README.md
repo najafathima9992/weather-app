@@ -1,64 +1,76 @@
 # 🌦️ Weather Dashboard
 
-A modern, responsive Weather Dashboard built with **Python Flask**, **HTML**, **CSS**, and **JavaScript**. The application allows users to search for any city and view the current weather conditions, a 7-day forecast, and temperature trends using the Open-Meteo API.
+A modern Weather Dashboard built using **Python Flask**, **HTML**, **CSS**, **JavaScript**, and **SQLite**. The application provides real-time weather information and a 7-day forecast for any city using the Open-Meteo API. It is deployed on **AWS EC2** using **Gunicorn** and **Nginx** with a custom **DuckDNS** domain.
 
 ---
 
-## 🚀 Features
+## 🚀 Live Demo
 
-- 🌍 Search weather by city
+**URL:** http://weatherforcast.duckdns.org
+
+
+# ✨ Features
+
+- 🌍 Search weather by city name
 - 🌡️ Current temperature
-- ☁️ Weather description
-- 🌬️ Wind speed
+- ☁️ Weather condition
 - 💧 Humidity
-- 🌅 Sunrise & Sunset time
+- 🌬️ Wind Speed
+- 🌅 Sunrise Time
+- 🌇 Sunset Time
 - 📅 7-Day Weather Forecast
 - 📈 Temperature Trend Chart
 - 🌙 Dark Mode
-- 📱 Responsive Design
-- 💾 SQLite Database for Search History
-- ⚡ REST API using Flask
-- 📝 Logging Support
-- 🔒 Error Handling
-- 🚀 Ready for AWS Deployment
+- 💾 Stores search history using SQLite
+- 📱 Responsive UI
+- ☁️ Deployed on AWS EC2
+- 🔄 Reverse Proxy using Nginx
+- ⚡ Production deployment using Gunicorn
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠 Technologies Used
 
-### Frontend
+## Backend
+
+- Python 3
+- Flask
+- Requests
+- SQLite
+
+## Frontend
 
 - HTML5
 - CSS3
-- JavaScript (ES6)
+- JavaScript
 - Font Awesome
 - Chart.js
 
-### Backend
+## Deployment
 
-- Python
-- Flask
-- SQLite3
-- Requests Library
-
-### Weather API
-
-- Open-Meteo API
-- Open-Meteo Geocoding API
+- AWS EC2
+- Gunicorn
+- Nginx
+- DuckDNS
 
 ---
 
-## 📁 Project Structure
+# 📂 Project Structure
 
 ```
-weather_dashboard/
+weather-app/
+│
+├── app.py
+├── weather.db
+├── requirements.txt
+├── README.md
 │
 ├── static/
 │   ├── css/
-│   │    └── style.css
+│   │     └── style.css
 │   │
 │   ├── js/
-│   │    └── app.js
+│   │     └── script.js
 │   │
 │   └── images/
 │
@@ -66,23 +78,14 @@ weather_dashboard/
 │   ├── base.html
 │   └── index.html
 │
-├── logs/
-│   └── app.log
-│
-├── weather.db
-├── app.py
-├── config.py
-├── requirements.txt
-├── .env
-├── README.md
-└── .gitignore
+└── venv/
 ```
 
 ---
 
-## ⚙️ Installation
+# ⚙️ Installation
 
-### Clone Repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/yourusername/weather-dashboard.git
@@ -94,7 +97,13 @@ cd weather-dashboard
 
 ---
 
-### Create Virtual Environment
+## Create Virtual Environment
+
+Linux
+
+```bash
+python3 -m venv venv
+```
 
 Windows
 
@@ -102,25 +111,25 @@ Windows
 python -m venv venv
 ```
 
-Activate
+---
 
-```bash
-venv\Scripts\activate
-```
+## Activate Virtual Environment
 
-Linux/macOS
-
-```bash
-python3 -m venv venv
-```
+Linux
 
 ```bash
 source venv/bin/activate
 ```
 
+Windows
+
+```bash
+venv\Scripts\activate
+```
+
 ---
 
-### Install Dependencies
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -128,13 +137,13 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Run Application
+## Run Application
 
 ```bash
 python app.py
 ```
 
-Open your browser
+Application runs on
 
 ```
 http://127.0.0.1:5000
@@ -142,29 +151,75 @@ http://127.0.0.1:5000
 
 ---
 
-## 🌐 Weather API
+# ☁️ Deployment
 
-This project uses the free Open-Meteo API.
+The application is deployed using
 
-Current Weather
+- AWS EC2
+- Gunicorn
+- Nginx
+- DuckDNS
 
+Gunicorn Command
+
+```bash
+gunicorn --bind 127.0.0.1:8000 app:app
 ```
-https://api.open-meteo.com/v1/forecast
+
+Nginx Reverse Proxy
+
+```nginx
+server {
+
+    listen 80;
+
+    server_name weatherforcast.duckdns.org;
+
+    location / {
+
+        proxy_pass http://127.0.0.1:8000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+    }
+
+}
 ```
 
-Geocoding API
+Restart Nginx
 
+```bash
+sudo nginx -t
+sudo systemctl restart nginx
 ```
-https://geocoding-api.open-meteo.com/v1/search
-```
-
-No API key is required.
 
 ---
 
-## 💾 Database
+# 🌐 Weather API
 
-SQLite is used to store user search history.
+This project uses
+
+**Open-Meteo API**
+
+Features used
+
+- Current Weather
+- Weather Codes
+- Temperature
+- Humidity
+- Wind Speed
+- Sunrise
+- Sunset
+- Daily Forecast
+
+---
+
+# 📊 Database
+
+SQLite Database
 
 Table
 
@@ -176,112 +231,135 @@ Columns
 
 | Column | Type |
 |---------|------|
-| id | Integer |
-| city | Text |
-| searched_at | Timestamp |
+| id | INTEGER |
+| city | TEXT |
+| searched_at | TIMESTAMP |
 
 ---
 
-## 📊 API Endpoints
+# 📡 API Endpoints
 
-### Home
+## Home
 
 ```
 GET /
 ```
 
-Returns the main dashboard.
+Returns the Weather Dashboard.
 
 ---
 
-### Weather
+## Weather
 
 ```
 GET /weather?city=London
 ```
 
-Example Response
-
-```json
-{
-  "city":"London",
-  "temperature":22,
-  "description":"Partly Cloudy",
-  "humidity":72,
-  "wind":18
-}
-```
+Returns weather details for a city.
 
 ---
 
-### Search History
+## Search History
 
 ```
 GET /history
 ```
 
-Returns recent searches stored in SQLite.
+Returns recently searched cities.
 
 ---
 
-## 🌙 Dark Mode
+# 🖥 Application Workflow
 
-Click the moon icon to switch between Light Mode and Dark Mode.
-
----
-
-## 📈 Temperature Chart
-
-Chart.js is used to visualize the 7-day temperature forecast.
-
----
-
-## 🚀 Deployment
-
-The application can be deployed on:
-
-- AWS EC2
-- Nginx
-- Gunicorn
-- Docker
-- Render
-- Railway
-- PythonAnywhere
-
----
-
-## 🔒 Security Features
-
-- Input Validation
-- HTTP Error Handling
-- Request Timeout
-- Logging
-- Environment Variables
-- SQLite Parameterized Queries
+```
+User
+   │
+   ▼
+Browser
+   │
+   ▼
+JavaScript Fetch API
+   │
+   ▼
+Flask Backend
+   │
+   ▼
+Open-Meteo API
+   │
+   ▼
+Weather Data
+   │
+   ▼
+JSON Response
+   │
+   ▼
+Frontend UI
+```
 
 ---
 
-## 📚 Learning Outcomes
+# AWS Deployment Architecture
 
-This project demonstrates knowledge of:
+```
+                Internet
+                     │
+                     ▼
+      weatherforcast.duckdns.org
+                     │
+                     ▼
+            Nginx (Port 80)
+                     │
+             Reverse Proxy
+                     │
+                     ▼
+     Gunicorn (127.0.0.1:8000)
+                     │
+                     ▼
+            Flask Application
+                     │
+         ┌───────────┴───────────┐
+         ▼                       ▼
+     SQLite Database       Open-Meteo API
+```
 
-- Python Programming
-- Flask Framework
-- REST APIs
-- JSON Handling
-- SQLite Database
+---
+
+# Future Improvements
+
+- HTTPS using Let's Encrypt
+- User Authentication
+- Favourite Cities
+- Air Quality Index
+- Hourly Forecast
+- Weather Notifications
+- Docker Support
+- CI/CD using GitHub Actions
+- AWS CloudWatch Monitoring
+
+---
+
+# Skills Demonstrated
+
+- Python
+- Flask
+- REST API
+- SQLite
 - HTML
 - CSS
 - JavaScript
-- AJAX (Fetch API)
-- Chart.js
-- Responsive Web Design
-- Error Handling
+- JSON
+- API Integration
+- Linux
+- Gunicorn
+- Nginx
+- AWS EC2
+- DNS Configuration
+- Reverse Proxy
+- Web Deployment
 
 ---
 
-## 📄 License
 
-This project is licensed under the MIT License.
+# License
 
-Feel free to use, modify, and distribute this project for educational purposes.
+This project is developed for educational and portfolio purposes.
